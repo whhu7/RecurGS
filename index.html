@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="IGFuse: Interactive 3D Gaussian Scene Reconstruction via Multi-Scans Fusion">
+  <meta name="keywords" content="3DGS,  Segmentation">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IGFuse</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$",  right: "$",  display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  });
+</script>
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/compare.css">
+  <link rel="icon" href="./static/images/logo.png">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <!-- <script src="./static/js/index.js"></script> -->
+  <script src="./static/js/compare.js"></script>
+</head>
+<!-- <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const videos = [document.getElementById('leftVideo'),document.getElementById('depthOursVideo'),document.getElementById('depthGroupingVideo'), document.getElementById('rightVideo')];
+
+  // 定时检测并恢复播放
+  setInterval(() => {
+    videos.forEach(video => {
+      if (video.paused) {
+        video.play().catch(() => {});
+      }
+    });
+  }, 1000);
+});
+</script> -->
+
+<body>
+
+ 
+  <!-- 标题、作者、链接 -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-widescreen">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title"><span
+                style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold;">RecurGS</span>:
+              Interactive Scene Modeling <br> via Discrete-State
+              Recurrent Gaussian Fusion</h1>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                Wenhao Hu<sup>1,2</sup>,</span>
+              <span class="author-block">
+                Haonan Zhou<sup>1</sup>,
+              </span>
+              <span class="author-block">
+                Zesheng Li<sup>3</sup>,</span>
+              <span class="author-block">
+                Liu Liu<sup>2</sup>,
+              </span>
+              <span class="author-block">
+                Jiacheng Dong<sup>1</sup>,
+              </span>
+              <span class="author-block">
+                Zhizhong Su<sup>2</sup>,
+              </span>
+              <span class="author-block">
+                Gaoang Wang<sup>1</sup>
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>Zhejiang University</span><br>
+              <span class="author-block"><sup>2</sup>Horizon Robotics</span><br>
+              <span class="author-block"><sup>3</sup> Nanyang Technological University</span>
+              
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- PDF Link. -->
+                <span class="link-block">
+                  <a href="https://arxiv.org/pdf/2508.13153" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                    </span>
+                    <span>Paper</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2508.13153" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
+                <!-- Video Link. -->
+                <!-- <span class="link-block">
+                  <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                    </span>
+                    <span>Video</span>
+                  </a>
+                </span> -->
+                <!-- Code Link. -->
+                <span class="link-block">
+                  <a href="https://github.com/whhu7/IGFuse-code" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+                <!-- Dataset Link. -->
+                <!-- <span class="link-block">
+                  <a href="https://github.com/google/nerfies/releases/tag/0.1"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="far fa-images"></i>
+                    </span>
+                    <span>Data</span>
+                  </a> -->
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+  <!-- Video -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Paper video. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-11">
+          <h2 class="title is-3">Video</h2>
+          <div class="publication-video">
+            <video id="paperVideo" preload controls playsinline width="100%">
+              <source src="static/videos/papervideo.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Abstract -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Abstract. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-11">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Recent advances in 3D scene representations have enabled high-fidelity novel view synthesis, yet adapting to discrete scene changes and constructing interactive 3D environments remain open challenges in vision and robotics. 
+              Existing approaches focus solely on updating a single scene without supporting novel-state synthesis. 
+              Others rely on diffusion-based object–background decoupling that works on one state at a time and cannot fuse information across multiple observations. 
+              To address these limitations, we introduce <span
+              style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold;">RecurGS</span>, a recurrent fusion framework that incrementally integrates discrete Gaussian scene states into a single evolving representation capable of interaction. 
+              RecurGS detects object-level changes across consecutive states, aligns their geometric motion using semantic correspondence and Lie-algebra–based SE(3) refinement, and performs recurrent updates that preserve historical structures through replay supervision. 
+              A voxelized, visibility-aware fusion module selectively incorporates newly observed regions while keeping stable areas fixed, mitigating catastrophic forgetting and enabling efficient long-horizon updates. 
+              RecurGS supports object-level manipulation, synthesizes novel scene states without requiring additional scans, and maintains photorealistic fidelity across evolving environments. 
+              Extensive experiments across synthetic and real-world datasets demonstrate that our framework delivers high-quality reconstructions with substantially improved update efficiency, providing a scalable step toward continuously interactive Gaussian worlds.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!--/ Abstract. -->
+
+    </div>
+  </section>
+  
+  
+  
+
+
+
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <div class="columns is-centered">
+      <div class="column is-11">
+        
+      
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@misc{hu2025igfuseinteractive3dgaussian,
+      title={IGFuse: Interactive 3D Gaussian Scene Reconstruction via Multi-Scans Fusion}, 
+      author={Wenhao Hu and Zesheng Li and Haonan Zhou and Liu Liu and Xuexiang Wen and Zhizhong Su and Xi Li and Gaoang Wang},
+      year={2025},
+      eprint={2508.13153},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2508.13153}, 
+}</code></pre>
+    </div></div>
+    </div>
+  </section>
+
+
+  <footer class="footer">
+    <div class="container">
+      <!-- 
+      <div class="content has-text-centered">
+        <a class="icon-link" href="./static/videos/nerfies_paper.pdf">
+          <i class="fas fa-file-pdf"></i>
+        </a>
+        <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
+          <i class="fab fa-github"></i>
+        </a>
+      </div> -->
+
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This website is licensed under a <a rel="license"
+                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+                Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+            <p>
+              We thank the authors of  <a href="https://github.com/nerfies/nerfies.github.io">Nerfies </a> for kindly open-sourcing the template of this website.
+              
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+
+</html>
+
+
